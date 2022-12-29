@@ -1,0 +1,236 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>创建和管理 Linux 服务器用于身份验证的 SSH 密钥 | Cat Tom&#39;s Note</title>
+<link rel="shortcut icon" href="https://note.cattom.site/favicon.ico?v=1672329592567">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://note.cattom.site/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="创建和管理 Linux 服务器用于身份验证的 SSH 密钥 | Cat Tom&#39;s Note - Atom Feed" href="https://note.cattom.site/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="使用 ssh-keygen 生成密钥
+以下 ssh-keygen 命令默认在 ~/.ssh 目录中生成 4096 位 SSH RSA 公钥和私钥文件。 如果当前位置存在 SSH 密钥对，这些文件将被覆盖。
+ssh-keygen \
+    ..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://note.cattom.site">
+  <img class="avatar" src="https://note.cattom.site/images/avatar.png?v=1672329592567" alt="">
+  </a>
+  <h1 class="site-title">
+    Cat Tom&#39;s Note
+  </h1>
+  <p class="site-description">
+    各种各样奇奇怪怪的笔记~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="https://note.cattom.site/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/cattomgithub" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              创建和管理 Linux 服务器用于身份验证的 SSH 密钥
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-12-29
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="使用-ssh-keygen-生成密钥">使用 ssh-keygen 生成密钥</h2>
+<p>以下 ssh-keygen 命令默认在 ~/.ssh 目录中生成 4096 位 SSH RSA 公钥和私钥文件。 如果当前位置存在 SSH 密钥对，这些文件将被覆盖。</p>
+<pre><code class="language-bash">ssh-keygen \
+    -m PEM \
+    -t rsa \
+    -b 4096 \
+    -C &quot;azureuser@myserver&quot; \
+    -f ~/.ssh/mykeys/myprivatekey \
+    -N mypassphrase
+</code></pre>
+<h3 id="命令解释">命令解释</h3>
+<p><code>ssh-keygen</code> = 用于创建密钥的程序</p>
+<p><code>-m PEM</code> = 将密钥的格式设为 PEM</p>
+<p><code>-t rsa</code> = 要创建的密钥类型，本例中为 RSA 格式</p>
+<p><code>-b 4096</code> = 密钥的位数，本例中为 4096</p>
+<p><code>-C &quot;azureuser@myserver&quot;</code> = 追加到公钥文件末尾以便于识别的注释。 通常以电子邮件地址用作注释，但也可以使用任何最适合你事物。</p>
+<p><code>-f ~/.ssh/mykeys/myprivatekey</code> = 私钥文件的文件名（如果选择不使用默认名称）。 追加了 .pub 的相应公钥文件在相同目录中生成。 该目录必须存在。</p>
+<p><code>-N mypassphrase</code> = 用于访问私钥文件的其他密码。</p>
+<h2 id="使用-ssh-agent-来存储私钥密码">使用 ssh-agent 来存储私钥密码</h2>
+<p>为了避免在每次 SSH 登录时键入私钥文件密码，可以使用 <code>ssh-agent</code> 来缓存私钥文件密码。 如果使用 Mac，macOS Keychain 在用户调用 <code>ssh-agent</code> 时会安全存储私钥密码。验证并使用 <code>ssh-agent</code> 和 <code>ssh-add</code> 将密钥文件的情况通知给 SSH 系统，这样就无需交互使用密码。</p>
+<pre><code class="language-bash">eval &quot;$(ssh-agent -s)&quot;
+</code></pre>
+<p>现在，使用命令 <code>ssh-add</code> 将私钥添加到 <code>ssh-agent</code>。</p>
+<pre><code class="language-bash">ssh-add ~/.ssh/id_rsa
+</code></pre>
+<p>私钥密码现在存储在 <code>ssh-agent</code> 中。</p>
+<h2 id="使用-ssh-copy-id-将密钥复制到现有服务器">使用 ssh-copy-id 将密钥复制到现有服务器</h2>
+<p>如果已有服务器，可以使用 <code>ssh-copy-id</code>将新的 SSH 公钥添加到 Linux 服务器。</p>
+<pre><code class="language-bash">ssh-copy-id -i ~/.ssh/id_rsa.pub azureuser@myserver
+</code></pre>
+<h2 id="创建并配置-ssh-配置文件">创建并配置 SSH 配置文件</h2>
+<p>可创建并配置 SSH 配置文件 (<code>~/.ssh/config</code>)，以便加速登录和优化 SSH 客户端行为。</p>
+<p>以下示例显示一个简单配置，通过此配置，你可以使用默认的 SSH 私钥以用户身份快速登录到特定 VM。</p>
+<p>创建文件。</p>
+<pre><code class="language-Bash">touch ~/.ssh/config
+</code></pre>
+<p>编辑文件以添加新的 SSH 配置</p>
+<pre><code class="language-Bash">vim ~/.ssh/config
+</code></pre>
+<p>添加适用于主机 VM 的配置设置。 在此示例中，VM 名称（主机）为 myvm，帐户名称（用户）为 azureuser，IP 地址或 FQDN（主机名）为 192.168.0.255。</p>
+<pre><code class="language-Bash"># Azure Keys
+Host myvm
+  Hostname 192.168.0.255
+  User azureuser
+# ./Azure Keys
+</code></pre>
+<p>可为其他主机添加配置，让每台主机使用其自己的专用密钥对。 查看 SSH 配置文件获取更多高级配置选项。</p>
+<p>获得 SSH 密钥对和配置的 SSH 配置文件后，便可快速安全地远程访问 Linux VM。 运行以下命令时，SSH 从 SSH 配置文件的 Host myvm 块中找到所有设置并加载它们。</p>
+<pre><code class="language-Bash">ssh myvm
+</code></pre>
+<p>首次使用 SSH 密钥登录到服务器时，命令会提示用户输入该密钥文件的密码。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E4%BD%BF%E7%94%A8-ssh-keygen-%E7%94%9F%E6%88%90%E5%AF%86%E9%92%A5">使用 ssh-keygen 生成密钥</a>
+<ul>
+<li><a href="#%E5%91%BD%E4%BB%A4%E8%A7%A3%E9%87%8A">命令解释</a></li>
+</ul>
+</li>
+<li><a href="#%E4%BD%BF%E7%94%A8-ssh-agent-%E6%9D%A5%E5%AD%98%E5%82%A8%E7%A7%81%E9%92%A5%E5%AF%86%E7%A0%81">使用 ssh-agent 来存储私钥密码</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8-ssh-copy-id-%E5%B0%86%E5%AF%86%E9%92%A5%E5%A4%8D%E5%88%B6%E5%88%B0%E7%8E%B0%E6%9C%89%E6%9C%8D%E5%8A%A1%E5%99%A8">使用 ssh-copy-id 将密钥复制到现有服务器</a></li>
+<li><a href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E9%85%8D%E7%BD%AE-ssh-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6">创建并配置 SSH 配置文件</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://note.cattom.site/post/zai-ubuntu-shang-she-zhi-zi-ding-yi-dns-fu-wu-qi/">
+              <h3 class="post-title">
+                在 Ubuntu 上设置自定义DNS服务器
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank"> Gridea</a>
+  <a class="rss" href="https://note.cattom.site/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

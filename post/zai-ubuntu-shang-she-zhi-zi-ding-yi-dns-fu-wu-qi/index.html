@@ -1,0 +1,245 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>在 Ubuntu 上设置自定义DNS服务器 | Cat Tom&#39;s Note</title>
+<link rel="shortcut icon" href="https://note.cattom.site/favicon.ico?v=1672329592567">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://note.cattom.site/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="在 Ubuntu 上设置自定义DNS服务器 | Cat Tom&#39;s Note - Atom Feed" href="https://note.cattom.site/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="第一步：修改 /etc/systemd/resolved.conf
+sudo nano /etc/systemd/resolved.conf
+
+# /etc/systemd/resolved.conf
+[Resolve]
+DNS=114.1..." />
+    <meta name="keywords" content="Ubuntu,DNS,Linux" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://note.cattom.site">
+  <img class="avatar" src="https://note.cattom.site/images/avatar.png?v=1672329592567" alt="">
+  </a>
+  <h1 class="site-title">
+    Cat Tom&#39;s Note
+  </h1>
+  <p class="site-description">
+    各种各样奇奇怪怪的笔记~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="https://note.cattom.site/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/cattomgithub" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              在 Ubuntu 上设置自定义DNS服务器
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-08-27
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://note.cattom.site/tag/ubuntu/" class="post-tag">
+                  # Ubuntu
+                </a>
+              
+                <a href="https://note.cattom.site/tag/dns/" class="post-tag">
+                  # DNS
+                </a>
+              
+                <a href="https://note.cattom.site/tag/linux/" class="post-tag">
+                  # Linux
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="第一步修改-etcsystemdresolvedconf">第一步：修改 <code>/etc/systemd/resolved.conf</code></h2>
+<pre><code class="language-sh">sudo nano /etc/systemd/resolved.conf
+
+# /etc/systemd/resolved.conf
+[Resolve]
+DNS=114.114.114.114
+FallbackDNS=114.114.115.115
+#Domains=
+#LLMNR=no
+#MulticastDNS=no
+#DNSSEC=no
+#DNSOverTLS=no
+#Cache=no-negative
+#DNSStubListener=yes
+#ReadEtcHosts=yes
+</code></pre>
+<p>此处我们添加 <code>DNS=114.114.114.114</code>，<code>FallbackDNS=114.114.115.115</code> 作为我们的DNS服务器。</p>
+<h2 id="第二步重启-systemd-resolved-服务">第二步：重启 <code>systemd-resolved</code> 服务</h2>
+<pre><code class="language-sh">sudo systemctl daemon-reload
+sudo systemctl restart systemd-resolved.service
+</code></pre>
+<h2 id="第三步将-etcresolvconf-链接到-runsystemdresolveresolvconf">第三步：将 <code>/etc/resolv.conf</code> 链接到 <code>/run/systemd/resolve/resolv.conf</code></h2>
+<pre><code class="language-sh">sudo mv /etc/resolv.conf /etc/resolv.conf.bak
+sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+</code></pre>
+<h2 id="第四步使用-dig-命令验证-dns-更改">第四步：使用 <code>dig</code> 命令验证 DNS 更改</h2>
+<pre><code class="language-sh">dig note.cattom.site
+
+; &lt;&lt;&gt;&gt; DiG 9.16.1-Ubuntu &lt;&lt;&gt;&gt; note.cattom.site
+;; global options: +cmd
+;; Got answer:
+;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 38658
+;; flags: qr rd ra; QUERY: 1, ANSWER: 4, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 512
+;; QUESTION SECTION:
+;note.cattom.site.              IN      A
+
+;; ANSWER SECTION:
+note.cattom.site.       514     IN      CNAME   cattomgithub.github.io.
+cattomgithub.github.io. 3514    IN      A       185.199.109.153
+cattomgithub.github.io. 3514    IN      A       185.199.110.153
+cattomgithub.github.io. 3514    IN      A       185.199.111.153
+
+;; Query time: 24 msec
+;; SERVER: 114.114.114.114#53(114.114.114.114)
+;; WHEN: Sat Aug 27 00:25:19 CST 2022
+;; MSG SIZE  rcvd: 129
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%E4%BF%AE%E6%94%B9-etcsystemdresolvedconf">第一步：修改 <code>/etc/systemd/resolved.conf</code></a></li>
+<li><a href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%E9%87%8D%E5%90%AF-systemd-resolved-%E6%9C%8D%E5%8A%A1">第二步：重启 <code>systemd-resolved</code> 服务</a></li>
+<li><a href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%E5%B0%86-etcresolvconf-%E9%93%BE%E6%8E%A5%E5%88%B0-runsystemdresolveresolvconf">第三步：将 <code>/etc/resolv.conf</code> 链接到 <code>/run/systemd/resolve/resolv.conf</code></a></li>
+<li><a href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%E4%BD%BF%E7%94%A8-dig-%E5%91%BD%E4%BB%A4%E9%AA%8C%E8%AF%81-dns-%E6%9B%B4%E6%94%B9">第四步：使用 <code>dig</code> 命令验证 DNS 更改</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://note.cattom.site/post/geng-gai-linux-de-zhu-ji-ming-hostname/">
+              <h3 class="post-title">
+                更改 Linux 的主机名(hostname)
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank"> Gridea</a>
+  <a class="rss" href="https://note.cattom.site/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

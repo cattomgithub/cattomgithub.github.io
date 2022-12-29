@@ -1,0 +1,207 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>更改 Linux 的主机名(hostname) | Cat Tom&#39;s Note</title>
+<link rel="shortcut icon" href="https://note.cattom.site/favicon.ico?v=1672329592567">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://note.cattom.site/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="更改 Linux 的主机名(hostname) | Cat Tom&#39;s Note - Atom Feed" href="https://note.cattom.site/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="查看主机名
+hostname
+
+
+或者
+hostnamectl
+
+
+修改主机名
+sudo hostnamectl set-hostname &lt;new hostname&gt;
+
+这条命令会删除 /etc/hostname 文件中的主机..." />
+    <meta name="keywords" content="Ubuntu,Linux" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://note.cattom.site">
+  <img class="avatar" src="https://note.cattom.site/images/avatar.png?v=1672329592567" alt="">
+  </a>
+  <h1 class="site-title">
+    Cat Tom&#39;s Note
+  </h1>
+  <p class="site-description">
+    各种各样奇奇怪怪的笔记~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="https://note.cattom.site/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/cattomgithub" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              更改 Linux 的主机名(hostname)
+            </h2>
+            <div class="post-info">
+              <span>
+                2022-08-26
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://note.cattom.site/tag/ubuntu/" class="post-tag">
+                  # Ubuntu
+                </a>
+              
+                <a href="https://note.cattom.site/tag/linux/" class="post-tag">
+                  # Linux
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="查看主机名">查看主机名</h2>
+<pre><code class="language-sh">hostname
+</code></pre>
+<figure data-type="image" tabindex="1"><img src="https://note.cattom.site/post-images/1661448351598.png" alt="" loading="lazy"></figure>
+<p>或者</p>
+<pre><code class="language-sh">hostnamectl
+</code></pre>
+<figure data-type="image" tabindex="2"><img src="https://note.cattom.site/post-images/1661448411630.png" alt="" loading="lazy"></figure>
+<h2 id="修改主机名">修改主机名</h2>
+<pre><code class="language-sh">sudo hostnamectl set-hostname &lt;new hostname&gt;
+</code></pre>
+<p>这条命令会删除 /etc/hostname 文件中的主机名，然后替换为新的主机名。</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E6%9F%A5%E7%9C%8B%E4%B8%BB%E6%9C%BA%E5%90%8D">查看主机名</a></li>
+<li><a href="#%E4%BF%AE%E6%94%B9%E4%B8%BB%E6%9C%BA%E5%90%8D">修改主机名</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://note.cattom.site/post/shi-yong-git-pull-fu-gai-ben-di-wen-jian/">
+              <h3 class="post-title">
+                使用 Git Pull 覆盖本地文件
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank"> Gridea</a>
+  <a class="rss" href="https://note.cattom.site/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

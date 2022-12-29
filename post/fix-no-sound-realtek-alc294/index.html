@@ -1,0 +1,215 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>[Ubuntu 20.04]Realtek ALC294无声音解决 | Cat Tom&#39;s Note</title>
+<link rel="shortcut icon" href="https://note.cattom.site/favicon.ico?v=1672329592567">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://note.cattom.site/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="[Ubuntu 20.04]Realtek ALC294无声音解决 | Cat Tom&#39;s Note - Atom Feed" href="https://note.cattom.site/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="环境
+
+ASUS FL8000U
+Ubuntu 20.04
+
+问题
+Realtek ALC294 声卡在 Ubuntu 20.04 下外放/耳机无声音
+估计这个问题应该只要是 ASUS 都可能会遇到，不论笔记本还是主板...
+解决
+
+修改 ..." />
+    <meta name="keywords" content="Ubuntu,Linux" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://note.cattom.site">
+  <img class="avatar" src="https://note.cattom.site/images/avatar.png?v=1672329592567" alt="">
+  </a>
+  <h1 class="site-title">
+    Cat Tom&#39;s Note
+  </h1>
+  <p class="site-description">
+    各种各样奇奇怪怪的笔记~
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="https://note.cattom.site/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+        <a href="https://github.com/cattomgithub" target="_blank">
+          <i class="ri-github-line"></i>
+        </a>
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              [Ubuntu 20.04]Realtek ALC294无声音解决
+            </h2>
+            <div class="post-info">
+              <span>
+                2021-08-04
+              </span>
+              <span>
+                1 min read
+              </span>
+              
+                <a href="https://note.cattom.site/tag/ubuntu/" class="post-tag">
+                  # Ubuntu
+                </a>
+              
+                <a href="https://note.cattom.site/tag/linux/" class="post-tag">
+                  # Linux
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="环境">环境</h2>
+<ul>
+<li>ASUS FL8000U</li>
+<li>Ubuntu 20.04</li>
+</ul>
+<h2 id="问题">问题</h2>
+<p><strong>Realtek ALC294</strong> 声卡在 <strong>Ubuntu 20.04</strong> 下外放/耳机无声音</p>
+<p>估计这个问题应该只要是 ASUS 都可能会遇到，不论笔记本还是主板...</p>
+<h2 id="解决">解决</h2>
+<ol>
+<li>修改 <code>/etc/modprobe.d/alsa-base.conf</code></li>
+<li>在文件的最后添加 <code>options snd-hda-intel model=asus-zenbook</code></li>
+<li>保存文件后，重启电脑</li>
+</ol>
+<h2 id="附查看你使用的声卡型号">附：查看你使用的声卡型号</h2>
+<p>一般声卡都是在 <strong>device 0</strong></p>
+<pre><code class="language-bash">aplay -l
+
+**** PLAYBACK 硬體裝置清單 ****
+card 0: PCH [HDA Intel PCH], device 0: ALC294 Analog [ALC294 Analog]
+  子设备: 1/1
+  子设备 #0: subdevice #0
+
+...
+</code></pre>
+<h2 id="参考">参考</h2>
+<p><a href="https://askubuntu.com/questions/1276428/no-sound-alc294-asus-rog-strix-512-ubuntu-20-04-01/">Ask Ubuntu - No sound ALC294 Asus ROG Strix 512 Ubuntu 20.04.01</a></p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#%E7%8E%AF%E5%A2%83">环境</a></li>
+<li><a href="#%E9%97%AE%E9%A2%98">问题</a></li>
+<li><a href="#%E8%A7%A3%E5%86%B3">解决</a></li>
+<li><a href="#%E9%99%84%E6%9F%A5%E7%9C%8B%E4%BD%A0%E4%BD%BF%E7%94%A8%E7%9A%84%E5%A3%B0%E5%8D%A1%E5%9E%8B%E5%8F%B7">附：查看你使用的声卡型号</a></li>
+<li><a href="#%E5%8F%82%E8%80%83">参考</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank"> Gridea</a>
+  <a class="rss" href="https://note.cattom.site/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
